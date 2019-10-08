@@ -156,6 +156,7 @@ func main() {
 	var (
 		promAddrF     = kingpin.Flag("listen-prom-addr", "Prometheus remote API server listen address").Default("127.0.0.1:7781").String()
 		debugAddrF    = kingpin.Flag("listen-debug-addr", "Debug server listen address").Default("127.0.0.1:7782").String()
+		dsnF          = kingpin.Flag("db.dsn", "Clickhouse DSN").Default("tcp://127.0.0.1:9000/?database=prometheus").String()
 		dropF         = kingpin.Flag("db.drop-schema", "Drop existing database schema").Bool()
 		maxOpenConnsF = kingpin.Flag("db.max-open-conns", "Maximum number of open connections to the database").Default("75").Int()
 		storageTypeF  = kingpin.Flag("storage-type", "Storage type").Default("clickhouse").String()
@@ -192,7 +193,7 @@ func main() {
 	go func() {
 		defer wg.Done()
 		params := &clickhouse.Params{
-			DSN:                  "tcp://127.0.0.1:9000/?database=prometheus",
+			DSN:                  *dsnF,
 			DropDatabase:         *dropF,
 			MaxOpenConns:         *maxOpenConnsF,
 			MaxTimeSeriesInQuery: 50,
